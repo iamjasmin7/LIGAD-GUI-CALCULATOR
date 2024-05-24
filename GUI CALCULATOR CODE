@@ -1,0 +1,61 @@
+import tkinter as tk
+
+def on_button_click(value):
+    if value == "=":
+        try:
+            expression = display.get()
+            result = eval(expression)
+            display.delete(0, tk.END)
+            display.insert(tk.END, str(result))
+            recent_label.config(text=f"Recent Calculation: {expression} = {result}")
+        except Exception:
+            display.delete(0, tk.END)
+            display.insert(tk.END, "Error")
+            recent_label.config(text="Recent Calculation: Error")
+    elif value == "C":
+        display.delete(0, tk.END)
+        recent_label.config(text="Recent Calculation: ")
+    elif value == "E":
+        cursor_position = display.index(tk.INSERT)
+        display.delete(cursor_position - 1)
+    else:
+        cursor_position = display.index(tk.INSERT)
+        display.insert(cursor_position, value)
+
+root = tk.Tk()
+root.title("Calculator")
+root.configure(bg="lightblue")
+
+display = tk.Entry(root, font=('Arial', 16), width=20, bd=5, justify='left')
+display.grid(row=0, column=0, columnspan=4, pady=10)
+
+recent_label = tk.Label(root, text="Recent Calculation: ", font=('Arial', 12), bg="lightblue")
+recent_label.grid(row=6, column=0, columnspan=4, pady=10)
+
+buttons = [
+    "7", "8", "9", "/",
+    "4", "5", "6", "*",
+    "1", "2", "3", "-",
+    "0", ".", "E", "+",
+    "(", ")", "C", "="
+]
+
+row, col = 1, 0
+for button in buttons:
+    if button in ["+", "-", "*", "/"]:
+        tk.Button(root, text=button, font=('Arial', 14), width=5, height=2,
+                  command=lambda b=button: on_button_click(b), fg="blue").grid(row=row, column=col)
+    elif button == "=":
+        tk.Button(root, text=button, font=('Arial', 14), width=5, height=2,
+                  command=lambda b=button: on_button_click(b), fg="orange").grid(row=row, column=col)
+    else:
+        tk.Button(root, text=button, font=('Arial', 14), width=5, height=2,
+                  command=lambda b=button: on_button_click(b)).grid(row=row, column=col)
+    col += 1
+    if col > 3:
+        col = 0
+        row += 1
+
+root.mainloop()
+
+#REFERENCE https://chatgpt.com /https://www.geeksforgeeks.org/python-simple-gui-calculator-using-tkinter/ 
